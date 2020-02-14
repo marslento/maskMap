@@ -97,7 +97,7 @@ export default {
   },
   async mounted() {
     // create
-    this.map = this.$utils.map.createMap('map', { maxZoom: 24 });
+    this.map = this.$utils.map.createMap('map', { maxZoom: 18 });
     this.$utils.map.createTileLayer(this.map, this.config.mapURL, {
       attribution: this.config.attribution,
     });

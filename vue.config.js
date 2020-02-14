@@ -11,6 +11,6 @@ module.exports = {
     port: 8088,
   },
   publicPath: process.env.NODE_ENV === 'production'
-    ? './'
+    ? '/maskMap/'
     : '/',
 };
