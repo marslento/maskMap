@@ -5,7 +5,6 @@ import axios from 'axios';
 // Add a response interceptor
 axios.interceptors.response.use((response) => response, (error) => {
   if (!error.response) {
-    console.log(error);
     return Promise.reject({
       response: {
         data: null,
