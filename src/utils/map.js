@@ -3,7 +3,13 @@ import $L from 'leaflet';
 import 'leaflet.markercluster';
 import Color from './color';
 
-const createMap = (divId, options) => $L.map(divId, options);
+const createMap = (divId, options) => {
+  const map = $L.map(divId, options);
+  $L.control.zoom({
+    position: 'topright',
+  }).addTo(map);
+  return map;
+};
 
 const createTileLayer = async (map, url, options) => {
   const tileLayer = await $L.tileLayer(url, options);
@@ -88,6 +94,10 @@ const geoJsonLayerMarkerClusterGroup = (map, geoJsonData, fn) => {
   return markers;
 };
 
+const fitBounds = (map, points) => {
+  const geoJsonLayer = $L.geoJSON(points);
+  map.fitBounds(geoJsonLayer.getBounds());
+};
 
 const addMarker = (map, point, color) => {
   const customIcon = new CustomMarkerIcon(color);
@@ -108,4 +118,5 @@ export default {
   addMarker,
   addCircle,
   addGeoJson,
+  fitBounds,
 };

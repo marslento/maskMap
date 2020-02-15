@@ -1,24 +1,12 @@
 <template>
-  <section class="search-section p-2">
-    <div class="top-block">
-      <p class="mainTitle">即時口罩地圖</p>
-    </div>
+  <section class="search-section">
     <treeselect
       v-model="value"
       :multiple="false"
       :options="options"
       valueFormat="object"
-      placeholder="以地區或郵遞區號查詢"
+      placeholder="以行政區或郵遞區號查詢"
       :normalizer="normalizer"/>
-    <section class="pt-1" v-if="false">
-      <!-- {{filteredPharmacy.lenghth}} -->
-      <div v-for="pharmacy in filteredPharmacy" :key="pharmacy.properties.id">
-        <Pharmacy :pharmacy="pharmacy"/>
-      </div>
-    </section>
-    <section v-else>
-      <Pharmacy :pharmacy="pharmacyInfo"/>
-    </section>
   </section>
 </template>
 
@@ -28,22 +16,31 @@ import { mapGetters } from 'vuex';
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 import zipData from '@/map/twdistrictzip.json';
-import Pharmacy from './Pharmacy.vue';
 
 export default {
 /* eslint-disable no-underscore-dangle */
   name: 'SearchAddress',
   components: {
     Treeselect,
-    Pharmacy,
   },
   props: {
+    map: {
+      default: null,
+      required: true,
+    },
   },
   data() {
     return {
       value: null,
       options: zipData,
     };
+  },
+  watch: {
+    value() {
+      if (this.value) {
+        this.$utils.map.fitBounds(this.map, this.filteredPharmacy);
+      }
+    },
   },
   computed: {
     ...mapGetters(['pharmacies', 'pharmacyInfo']),
@@ -80,27 +77,12 @@ export default {
       };
     },
   },
+  mounted() {
+    // console.log(this.map);
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  @import './src/assets/style.scss';
-  .top-block{
-    background: #c6ebf1;
-    margin: -.5rem -.5rem .5rem -.5rem ;
-    padding: .5rem;
-    display: none;
-    @include pc-width {
-      display: block;
-    }
-  }
-  .mainTitle {
-    letter-spacing: 2px;
-    color: #313854;
-    // font-weight: 600;
-    text-align: left;
-    font-size: 1.1rem;
-  }
-
 </style>
