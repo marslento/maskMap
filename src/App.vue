@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
     <router-view/>
   </div>
 </template>
@@ -11,6 +7,7 @@
 <style lang="scss">
 @import "~leaflet.markercluster/dist/MarkerCluster.css";
 @import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
+@import "./src/assets/style.scss";
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap');
 html,body, #app{
   width: 100%;
@@ -38,14 +35,17 @@ html,body, #app{
     min-width: 32px;
     width: 100%;
     padding: .25rem 1rem;
-    margin: .25rem auto;
+    margin: .4rem auto;
     text-align: left;
     white-space: nowrap;
   }
   .mask-updated {
     font-size: .8rem;
+    padding-top: .25rem;
     // margin-bottom: .5rem;
+    // border-top: 1px solid #ededed;
     color: #a2a2a2;
+    text-align: left;
   }
   .mask-note {
     font-size: .9rem;
@@ -54,20 +54,5 @@ html,body, #app{
     padding-top: .25rem;
   }
 }
-.sta-grey {
-  background: #a7a7a7;
-  color: #fff;
-}
-.sta-red {
-  background: #d95e37;
-  color: #fff;
-}
-.sta-yellow {
-  background: #eec979;
-  color: #fff;
-}
-.sta-green {
-  background: #66bdcc;
-  color: #fff;
-}
+
 </style>

@@ -1,44 +1,61 @@
 <template>
-  <transition name="leave">
-    <div class="card text-left mt-3 mb-3 p-2" v-if="pharmacy">
-      <div class="card-body p-2">
-        <h5 class="card-title font-weight-bold">{{pharmacy.properties.name}}</h5>
-        <h6 class="text-muted">
+  <div class="pharmacy-card text-left mt-1" v-if="pharmacy">
+    <div class="info">
+      <h5 class="font-weight-bold mb-3">
+        <span>
+          {{pharmacy.properties.name}}
+        </span>
+        <span class="pl-1">
+          <span :class="[maskClass(pharmacy.properties.mask_adult)]"></span>
+          <span :class="[maskClass(pharmacy.properties.mask_child)]"></span>
+        </span>
+      </h5>
+      <h6>
+        <a :href="'https://www.google.com.tw/maps/place/:'+ pharmacy.properties.address"
+          target="_blank"
+          style="text-decoration: none;">
+          <i class="fas fa-map-marker-alt pr-1"></i>
           {{pharmacy.properties.address}}
-        </h6>
-        <h6 class="text-muted">
+        </a>
+      </h6>
+      <h6>
+        <a :href="'tel:'+ pharmacy.properties.phone"
+          style="text-decoration: none;">
+          <i class="fas fa-phone-alt pr-1"></i>
           {{pharmacy.properties.phone}}
-        </h6>
-        <p class="d-flex pb-1">
-          <span :class="[maskClass(pharmacy.properties.mask_adult)]">
-            成人口罩：
-            {{pharmacy.properties.mask_adult}}
-          </span>
-          <span :class="[maskClass(pharmacy.properties.mask_child)]">
-            兒童口罩：
-            {{pharmacy.properties.mask_child}}
-          </span>
-        </p>
-        <div class="card-text availableDayTime "
-          v-html="availableTime(pharmacy.properties.available)">
-        </div>
-        <!-- custom_note -->
-        <div class="card-text note-block p-2"
-          v-if="pharmacy.properties.custom_note || pharmacy.properties.service_note">
-          <div> 店家備註：</div>
-          <div>{{pharmacy.properties.custom_note}}</div>
-          <div>{{pharmacy.properties.service_note}}</div>
-        </div>
-        <!-- <a
-          :href="'https://www.google.com.tw/maps/place/' + pharmacy.properties.address + pharmacy.properties.name"
-          class="card-link"
-          target="_blank">google map</a> -->
-         <small class="mb-2 text-muted">
-          更新時間：{{pharmacy.properties.updated ? pharmacy.properties.updated : '無資料'}}
-        </small>
+        </a>
+      </h6>
+      <div class="availableDayTime "
+        v-html="availableTime(pharmacy.properties.available)">
       </div>
+      <!-- <a
+        :href="'https://www.google.com.tw/maps/place/' + pharmacy.properties.address + pharmacy.properties.name"
+        class="card-link"
+        target="_blank">google map</a> -->
+      <!-- <small class="mb-2 text-muted">
+        更新時間：{{pharmacy.properties.updated ? pharmacy.properties.updated : '無資料'}}
+      </small> -->
     </div>
-  </transition>
+      <!-- custom_note -->
+    <div class="note-block p-3"
+      v-if="pharmacy.properties.note && pharmacy.properties.note !== '-'">
+      <!-- v-if="pharmacy.properties.custom_note || pharmacy.properties.service_note" -->
+      <div> 備註：</div>
+      <div>{{pharmacy.properties.note}}</div>
+      <!-- <div>{{pharmacy.properties.custom_note}}</div> -->
+      <!-- <div>{{pharmacy.properties.service_note}}</div> -->
+    </div>
+    <div class="d-flex w-100 maskInfo" v-if="false">
+      <span :class="[maskClass(pharmacy.properties.mask_adult)]">
+        成人口罩：
+        {{pharmacy.properties.mask_adult}}
+      </span>
+      <span :class="[maskClass(pharmacy.properties.mask_child)]">
+        兒童口罩：
+        {{pharmacy.properties.mask_child}}
+      </span>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -60,7 +77,8 @@ export default {
   methods: {
     maskClass(range) {
       const color = this.$utils.color.rangeColorMarker(range);
-      return `maskAmount rounded-pill sta-${color}`;
+      // return `maskAmount rounded-pill sta-${color}`;
+      return `maskAmount-dot sta-${color}`;
     },
     availableTime(data) {
       const arr = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
@@ -72,33 +90,55 @@ export default {
       return `<span class="today-weekday">${today}：</span> <span class="today-availableTime">${times}</span>`;
     },
   },
-  async created() {
-    // await this.fetch();
+  mounted() {
+    console.log(this.pharmacy);
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .top{
-    background: #c6ebf1;
-    margin: -.5rem -.5rem .5rem -.5rem ;
-    padding: .5rem;
+@import './src/assets/style.scss';
+  .pharmacy-card {
+    width: 98%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    @include pc-width {
+      flex-direction: column;
+    }
+    @include pc-phone-width {
+      flex-direction: row;
+    }
+    .info {
+      font-size: .9rem;
+      margin-bottom: .5rem;
+      a {
+        color: #41b4c7;
+      }
+      @include pc-phone-width {
+        margin-bottom: 0rem;
+      }
+    }
   }
-  .mainTitle {
-    letter-spacing: 2px;
-    color: #313854;
-    // font-weight: 600;
-    text-align: left;
-    font-size: 1.1rem;
+  .maskInfo {
+    flex-direction: column;
+    justify-content: space-evenly;
   }
   .maskAmount {
-    min-width: 32px;
-    width: 48%;
+    width: 150px;
     padding: .5rem 1rem;
     margin: .25rem auto;
     text-align: left;
     white-space: nowrap;
+    &-dot {
+      width: 12px;
+      height: 12px;
+      margin: 0 0.1rem;
+      display: inline-block;
+      border-radius: 50%;
+      transform: translateY(-2px);
+    }
   }
   .availableDayTime {
     // background: #efefef;
@@ -110,23 +150,26 @@ export default {
   .note-block{
     background: #efefef;
     border-radius: 5px;
-  }
-  .v-leave {
-    opacity: 1;
-  }
-  .v-leave-active {
-    transition: opacity 0.5s;
-  }
-  .v-leave-to {
-    opacity: 0;
-  }
-  .v-enter {
-    opacity: 0;
-  }
-  .v-enter-active {
-    transition: opacity 0.5s;
-  }
-  .v-enter-to {
-    opacity: 1;
+    height: 100%;
+    font-size: .9rem;
+    color: #767f80;
+    position: relative;
+    min-width: 40%;
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      width: 1px;
+      height: 26px;
+      background: #d2ac73;
+      transform: rotate(45deg);
+    }
+    &:before {
+      top: -6px;
+      left: 6px;
+    }
+    &:after {
+      bottom: -6px;
+      right: 6px;
+    }
   }
 </style>

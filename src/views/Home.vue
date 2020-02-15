@@ -7,8 +7,12 @@
     <!-- menu -->
       <!-- search input -->
       <!-- filter btns -->
-    <div :class="['pharmacy-info', {show: pharmacyInfo}]" >
-      <SearchAddress/>
+    <div :class="['pharmacy-info p-3', {show: pharmacyInfo}]" >
+      <!-- <SearchAddress/> -->
+      <div class="top-block">
+        <p class="mainTitle m-0">即時口罩地圖</p>
+      </div>
+      <Pharmacy :pharmacy="pharmacyInfo"/>
     </div>
   </div>
 </template>
@@ -17,14 +21,16 @@
 // @ is an alias to /src
 import { mapGetters, mapActions } from 'vuex';
 import config from '@/map/mapConfig.json';
-import SearchAddress from '../components/SearchAddress.vue';
+// import SearchAddress from '@/components/SearchAddress.vue';
+import Pharmacy from '@/components/Pharmacy.vue';
 
 // import $L from 'leaflet';
 
 export default {
   name: 'Home',
   components: {
-    SearchAddress,
+    // SearchAddress,
+    Pharmacy,
   },
   data() {
     return {
@@ -88,6 +94,7 @@ export default {
         this.setPharmacyInfo(null);
       } else {
         this.setPharmacyInfo(data.target.feature);
+        // this.$router.push
       }
     },
   },
@@ -112,6 +119,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@import './src/assets/style.scss';
 .home {
   width: 100%;
   height: 100%;
@@ -128,20 +136,50 @@ export default {
   height: 100%;
 }
 .pharmacy-info {
-  position: fixed;
-  top: 0;
-  left: -408px;
-  width: 408px;
-  height: 100%;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   background: #fff;
   z-index: 1000;
   overflow: auto;
-  opacity: 0;
   transition: left .6s, opacity .2s;
+  display: block;
+  position: fixed;
+  opacity: 0;
+  min-height: 166px;
+  min-width: 320px;
+  width: 100%;
+  box-shadow:  0px -2px 12px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 20px 20px 0px 0px;
   &.show {
-    left: 0;
+    bottom: 0;
     opacity: 1;
+  }
+  @include pc-width {
+    top: 0;
+    width: 408px;
+    left: -408px;
+    height: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    border-radius: 0px;
+    padding: 0rem;
+    &.show {
+      left: 0;
+      opacity: 1;
+    }
+  }
+}
+.top-block{
+  background: #c6ebf1;
+  padding: 0.5rem 1rem 0.75rem;
+  margin: -1rem -1rem 1.25rem -1rem;
+  display: none;
+  @include pc-width {
+    display: block;
+  }
+  .mainTitle {
+    letter-spacing: 2px;
+    color: #313854;
+    font-weight: 600;
+    text-align: left;
+    font-size: 1.1rem;
   }
 }
 </style>

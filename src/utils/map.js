@@ -42,15 +42,14 @@ const PopupContent = (feature) => {
   const child = Color.rangeColorMarker(feature.properties.mask_child);
   const staAdultClass = `sta-${adult}`;
   const staChildClass = `sta-${child}`;
-  let note = `<div class="mask-note"> 
-      <div>備註：</div>
-      <div>${feature.properties.note}</div>
-    </div>`;
-  note = feature.properties.note ? note : '';
+  // let note = `<div class="mask-note">
+  //     <div>備註：</div>
+  //     <div>${feature.properties.note}</div>
+  //   </div>`;
+  // note = feature.properties.note ? note : '';
   return `<div class="popUp" data-id="${feature.properties.id}">
       <div class="mask-title">
         <p class="font-weight-bold mb-1">${feature.properties.name}</p>
-        <div class="mask-updated">更新: ${feature.properties.updated ? feature.properties.updated : '無資料'}</div>
       </div>
       <div class="mask-wrap d-block justify-content-between">
         <div class="${staAdultClass} rounded-pill mask-adult">
@@ -60,7 +59,7 @@ const PopupContent = (feature) => {
           兒童：${feature.properties.mask_child === 0 ? '已售完' : feature.properties.mask_child}
         </div>
       </div>
-      ${note}
+      <div class="mask-updated">更新: ${feature.properties.updated ? feature.properties.updated : '無資料'}</div>
     </div>`;
 };
 

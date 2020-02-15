@@ -1,22 +1,12 @@
 <template>
-  <section class="search-section p-2">
-    <div class="top-block">
-      <p class="mainTitle">即時口罩地圖</p>
-    </div>
-    <treeselect
-      v-model="value"
-      :multiple="false"
-      :options="options"
-      valueFormat="object"
-      placeholder="以地區或郵遞區號查詢"
-      :normalizer="normalizer"/>
-    <section class="pt-1" v-if="false">
+  <section class="FilteredPharmacies-section p-2">
+    <section class="pt-1">
       <!-- {{filteredPharmacy.lenghth}} -->
       <div v-for="pharmacy in filteredPharmacy" :key="pharmacy.properties.id">
         <Pharmacy :pharmacy="pharmacy"/>
       </div>
     </section>
-    <section v-else>
+    <section>
       <Pharmacy :pharmacy="pharmacyInfo"/>
     </section>
   </section>
@@ -25,16 +15,14 @@
 <script>
 // import Address from '@/api/address';
 import { mapGetters } from 'vuex';
-import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 import zipData from '@/map/twdistrictzip.json';
 import Pharmacy from './Pharmacy.vue';
 
 export default {
 /* eslint-disable no-underscore-dangle */
-  name: 'SearchAddress',
+  name: 'FilteredPharmacies',
   components: {
-    Treeselect,
     Pharmacy,
   },
   props: {
@@ -58,49 +46,10 @@ export default {
     },
   },
   methods: {
-    normalizer(node) {
-      if (node.districts) {
-        const children = node.districts.map((d) => ({
-          ancestor: {
-            id: node.name,
-            name: node.name,
-            label: node.name,
-          },
-          ...d,
-        }));
-        return {
-          id: node.name,
-          label: node.name,
-          children,
-        };
-      }
-      return {
-        id: `${node.zip}${node.name}`,
-        label: `${node.zip} ${node.name}`,
-      };
-    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  @import './src/assets/style.scss';
-  .top-block{
-    background: #c6ebf1;
-    margin: -.5rem -.5rem .5rem -.5rem ;
-    padding: .5rem;
-    display: none;
-    @include pc-width {
-      display: block;
-    }
-  }
-  .mainTitle {
-    letter-spacing: 2px;
-    color: #313854;
-    // font-weight: 600;
-    text-align: left;
-    font-size: 1.1rem;
-  }
-
 </style>
