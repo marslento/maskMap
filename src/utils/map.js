@@ -92,11 +92,7 @@ const geoJsonLayerMarkerClusterGroup = (map, geoJsonData, fn, filter) => {
     onEachFeature(feature, layer) {
       const popupContent = PopupContent(feature);
       layer.bindPopup(popupContent)
-        .on('popupclose', (e) => {
-          // getZoom()
-          // const zoom = map.getZoom();
-          // map.setView
-          console.log(e);
+        .on('popupclose', () => {
           fn(null);
         });
       layer.on({
