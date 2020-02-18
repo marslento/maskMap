@@ -91,13 +91,17 @@ const geoJsonLayerMarkerClusterGroup = (map, geoJsonData, fn, filter) => {
   const geoJsonLayer = $L.geoJson(geoJsonData, {
     onEachFeature(feature, layer) {
       const popupContent = PopupContent(feature);
-      layer.bindPopup(popupContent)
+      layer
+        .bindPopup(() => {
+          fn(feature);
+          return popupContent;
+        })
         .on('popupclose', () => {
           fn(null);
         });
-      layer.on({
-        click: fn,
-      });
+      // .on({
+      //   click: fn,
+      // });
     },
     pointToLayer(feature, latlng) {
       // filter

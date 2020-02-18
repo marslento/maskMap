@@ -91,34 +91,20 @@ export default {
       },
       config,
       markersGroup: null,
-      mapHeight: 0,
       myLocationCircle: null,
       // maskType: 0,
     };
   },
-  // pharmacyInfoWrap
   watch: {
-    // getLocation() {
-    //   this.map.setView([this.geolocation.latitude, this.geolocation.longitude],
-    //     this.geolocation.viewSize);
-    // },
     pharmacies() {
       if (this.markersGroup) {
         this.$utils.map.removeLayer(this.map, this.markersGroup);
       }
       this.addMarkers();
     },
-    pharmacyInfo() {
-      if (this.pharmacyInfo) {
-        this.mapHeight = this.$refs.pharmacyInfoWrap.clientHeight;
-      }
-    },
   },
   computed: {
     ...mapGetters(['pharmacies', 'pharmacyInfo', 'maskType']),
-    // mapHeight() {
-    //   return this.$refs.pharmacyInfoWrap ? this.$refs.pharmacyInfoWrap.clientHeight : 0;
-    // },
   },
   methods: {
     ...mapActions(['fetchPharmacies', 'setPharmacyInfo', 'setMaskType']),
@@ -156,13 +142,17 @@ export default {
         this.maskType,
       );
     },
-    markerEmit(data) {
+    markerEmit(feature) {
       // save to vuex
-      if (!data) {
+      // console.log(feature);
+      if (!feature) {
         this.setPharmacyInfo(null);
       } else {
-        this.setPharmacyInfo(data.target.feature);
-        const coordinates = data.target.feature.geometry.coordinates.reverse();
+        this.setPharmacyInfo(feature);
+        const coordinates = JSON.parse(JSON.stringify(
+          feature.geometry.coordinates,
+        )).reverse();
+        // console.log(coordinates);
         const zoom = this.map.getZoom();
         this.map.setView(
           coordinates,
