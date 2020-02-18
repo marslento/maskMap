@@ -1,5 +1,5 @@
 <template>
-  <section class="search-section">
+  <section class="search-section" v-if="pharmacies">
     <treeselect
       v-model="value"
       :multiple="false"
@@ -37,7 +37,7 @@ export default {
   },
   watch: {
     value() {
-      if (this.value) {
+      if (this.value && this.filteredPharmacy.length > 0) {
         this.$utils.map.fitBounds(this.map, this.filteredPharmacy);
       }
     },
@@ -46,22 +46,31 @@ export default {
     ...mapGetters(['pharmacies', 'pharmacyInfo']),
     filteredPharmacy() {
       if (!this.pharmacies || !this.value) return [];
-      if (this.value.ancestor) {
+      // city
+      if (this.value.step === 'cunli') {
         return this.pharmacies.features
-          .filter((d) => d.properties.county === this.value.ancestor.name
+          .filter((d) => (d.properties.county === this.value.ancestor.county
+            && d.properties.town === this.value.ancestor.town
+            && d.properties.cunli === this.value.name));
+      }
+      // cunli
+      if (this.value.step === 'town') {
+        return this.pharmacies.features
+          .filter((d) => d.properties.county === this.value.ancestor.county
             && d.properties.town === this.value.name);
       }
+      // county
       return this.pharmacies.features.filter((d) => d.properties.county === this.value.name);
     },
   },
   methods: {
     normalizer(node) {
+      // county
       if (node.districts) {
         const children = node.districts.map((d) => ({
+          step: 'town',
           ancestor: {
-            id: node.name,
-            name: node.name,
-            label: node.name,
+            county: node.name,
           },
           ...d,
         }));
@@ -71,10 +80,40 @@ export default {
           children,
         };
       }
-      return {
-        id: `${node.zip}${node.name}`,
-        label: `${node.zip} ${node.name}`,
-      };
+      // town
+      if (node.step === 'town') {
+        const children = [];
+        const { features } = this.pharmacies;
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < features.length; i++) {
+          if (features[i].properties.county === node.ancestor.county
+              && features[i].properties.town === node.name) {
+            const dupicate = children.filter((d) => d.name === features[i].properties.cunli);
+            if (dupicate.length === 0) {
+              children.push(
+                {
+                  step: 'cunli',
+                  id: `${node.zip} ${node.name} ${features[i].properties.cunli}`,
+                  label: features[i].properties.cunli,
+                  name: features[i].properties.cunli,
+                  ancestor: {
+                    county: features[i].properties.county,
+                    zip: node.zip,
+                    town: features[i].properties.town,
+                  },
+                },
+              );
+            }
+          }
+        }
+        return {
+          step: 'town',
+          id: `${node.zip}${node.name}`,
+          label: `${node.zip} ${node.name}`,
+          children,
+        };
+      }
+      return {};
     },
   },
   mounted() {

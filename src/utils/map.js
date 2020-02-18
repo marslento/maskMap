@@ -29,16 +29,25 @@ const CustomMarkerIcon = (color) => $L.icon({
   shadowSize: [41, 41],
 });
 
+const CustomMarkerDivIcon = (color) => $L.divIcon({
+  className: 'custom-div-icon',
+  html: `<div class='marker-pin sta-${color}'></div>
+    <i class='fa fa-plus-circle awesome'></i>`,
+  iconSize: [30, 42],
+  iconAnchor: [15, 42],
+  popupAnchor: [0, -40],
+});
+
 const rangeColorMarker = (range) => {
   // .mask_adult + mask_child
   const markerColor = Color.rangeColorMarker(range);
-  let icon = new CustomMarkerIcon(markerColor);
+  let icon = new CustomMarkerDivIcon(markerColor);
   if (range > 100) {
-    icon = new CustomMarkerIcon(markerColor);
+    icon = new CustomMarkerDivIcon(markerColor);
   } else if (range > 50) {
-    icon = new CustomMarkerIcon(markerColor);
+    icon = new CustomMarkerDivIcon(markerColor);
   } else if (range > 0) {
-    icon = new CustomMarkerIcon(markerColor);
+    icon = new CustomMarkerDivIcon(markerColor);
   }
   return icon;
 };
@@ -59,23 +68,35 @@ const PopupContent = (feature) => {
       </div>
       <div class="mask-wrap d-block justify-content-between">
         <div class="${staAdultClass} rounded-pill mask-adult">
-          成人：${feature.properties.mask_adult === 0 ? '已售完' : feature.properties.mask_adult}
+          <span>成人</span>
+          <span>
+            ${feature.properties.mask_adult === 0 ? '已售完' : feature.properties.mask_adult}
+          </span>
         </div>
         <div class="${staChildClass} rounded-pill mask-child">
-          兒童：${feature.properties.mask_child === 0 ? '已售完' : feature.properties.mask_child}
+          <span>兒童</span>
+          <span>
+            ${feature.properties.mask_child === 0 ? '已售完' : feature.properties.mask_child}
+          </span>
         </div>
       </div>
       <div class="mask-updated">更新: ${feature.properties.updated ? feature.properties.updated : '無資料'}</div>
     </div>`;
 };
 
-const geoJsonLayerMarkerClusterGroup = (map, geoJsonData, fn) => {
-  const markers = $L.markerClusterGroup();
+const geoJsonLayerMarkerClusterGroup = (map, geoJsonData, fn, filter) => {
+  const markers = $L.markerClusterGroup({
+    disableClusteringAtZoom: 17,
+  });
   const geoJsonLayer = $L.geoJson(geoJsonData, {
     onEachFeature(feature, layer) {
       const popupContent = PopupContent(feature);
       layer.bindPopup(popupContent)
-        .on('popupclose', () => {
+        .on('popupclose', (e) => {
+          // getZoom()
+          // const zoom = map.getZoom();
+          // map.setView
+          console.log(e);
           fn(null);
         });
       layer.on({
@@ -83,7 +104,13 @@ const geoJsonLayerMarkerClusterGroup = (map, geoJsonData, fn) => {
       });
     },
     pointToLayer(feature, latlng) {
-      const range = feature.properties.mask_adult + feature.properties.mask_child;
+      // filter
+      let range = feature.properties.mask_adult + feature.properties.mask_child;
+      if (filter === 1) {
+        range = feature.properties.mask_adult;
+      } else if (filter === 2) {
+        range = feature.properties.mask_child;
+      }
       const customIcon = rangeColorMarker(range);
       return $L.marker(latlng, { icon: customIcon });
     },
@@ -105,7 +132,8 @@ const addMarker = (map, point, color) => {
 };
 
 const addCircle = (map, point, option) => {
-  $L.circle(point, option).addTo(map);
+  const circle = $L.circle(point, option).addTo(map);
+  return circle;
 };
 
 const addGeoJson = (geojsonFeature, map) => $L.geoJSON(geojsonFeature).addTo(map);

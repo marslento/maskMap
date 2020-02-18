@@ -6,7 +6,7 @@
         <p class="mainTitle m-0">即時口罩地圖</p>
       </div> -->
       <!-- search input -->
-      <div class="search-loc p-1">
+      <div class="search-loc">
         <div class="search-input pr-3">
           <SearchAddress :map="map"/>
         </div>
@@ -56,7 +56,8 @@
       <div id="map" ref="map"></div>
     </div>
     <!-- menu -->
-    <div ref="pharmacyInfoWrap" :class="['pharmacy-info p-3', {show: pharmacyInfo}]" >
+    <div ref="pharmacyInfoWrap"
+      :class="['pharmacy-info pt-2 pr-3 pl-3 pb-2', {show: pharmacyInfo}]" >
       <div class="top-block">
         <p class="mainTitle m-0">即時口罩地圖</p>
       </div>
@@ -71,7 +72,6 @@ import { mapGetters, mapActions } from 'vuex';
 import config from '@/map/mapConfig.json';
 import SearchAddress from '@/components/SearchAddress.vue';
 import Pharmacy from '@/components/Pharmacy.vue';
-
 // import $L from 'leaflet';
 
 export default {
@@ -92,15 +92,16 @@ export default {
       config,
       markersGroup: null,
       mapHeight: 0,
+      myLocationCircle: null,
       // maskType: 0,
     };
   },
   // pharmacyInfoWrap
   watch: {
-    getLocation() {
-      this.map.setView([this.geolocation.latitude, this.geolocation.longitude],
-        this.geolocation.viewSize);
-    },
+    // getLocation() {
+    //   this.map.setView([this.geolocation.latitude, this.geolocation.longitude],
+    //     this.geolocation.viewSize);
+    // },
     pharmacies() {
       if (this.markersGroup) {
         this.$utils.map.removeLayer(this.map, this.markersGroup);
@@ -138,7 +139,9 @@ export default {
       this.geolocation.latitude = position.coords.latitude;
       this.geolocation.longitude = position.coords.longitude;
       this.geolocation.viewSize = 16;
+      // console.log(position.coords.heading);
       if (this.map) {
+        this.setLocationCircle();
         this.map.setView(
           [this.geolocation.latitude, this.geolocation.longitude],
           this.geolocation.viewSize,
@@ -150,6 +153,7 @@ export default {
         this.map,
         this.pharmacies,
         this.markerEmit,
+        this.maskType,
       );
     },
     markerEmit(data) {
@@ -158,7 +162,25 @@ export default {
         this.setPharmacyInfo(null);
       } else {
         this.setPharmacyInfo(data.target.feature);
-        // this.$router.push
+        const coordinates = data.target.feature.geometry.coordinates.reverse();
+        const zoom = this.map.getZoom();
+        this.map.setView(
+          coordinates,
+          zoom,
+        );
+      }
+    },
+    setLocationCircle() {
+      if (this.map && !this.myLocationCircle) {
+        this.myLocationCircle = this.$utils.map.addCircle(this.map,
+          [this.geolocation.latitude, this.geolocation.longitude],
+          {
+            color: '#2196F3',
+            fillColor: '#2196F3',
+            fillOpacity: 0.9,
+            strokeOpacity: 0,
+            radius: 15,
+          });
       }
     },
   },
@@ -201,30 +223,34 @@ export default {
     height: 100%;
   }
 }
-.search-loc {
-  color: #313854;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 .search-wrap {
   width: 100%;
   z-index: 1002;
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
+  position: relative;
   @include pc-width {
     width: calc(408px - 1rem);
-    box-shadow: 0px 0 10px rgba(0, 0, 0, 0.3);
-    background: #fff;
+    // box-shadow: 0px 0 10px rgba(0, 0, 0, 0.3);
     position: fixed;
     top: 0px;
     left: 0px;
-    padding: 1rem .5rem;
-    margin: .5rem;
-    border-radius: 5px;
-    &.shades {
+    // &.shades {
       // border-radius: 0px;
-      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.19);
+      // box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.19);
+    // }
+  }
+  .search-loc {
+    color: #313854;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    padding: .5rem;
+    @include pc-width {
+      margin: .5rem;
+      border-radius: 5px;
     }
   }
 }
@@ -252,8 +278,13 @@ export default {
   }
 }
 .filter-wrap {
+  position: absolute;
   .btn {
     white-space: nowrap;
+    background: #fff;
+    &:hover {
+      background: #17a2b8;
+    }
   }
 }
 .pharmacy-info {
@@ -292,7 +323,7 @@ export default {
     margin: -1rem -1rem 1.25rem -1rem;
     display: none;
     @include pc-width {
-      margin-bottom: 105px;
+      margin-bottom: 90px;
       display: block;
       opacity: 0;
     }

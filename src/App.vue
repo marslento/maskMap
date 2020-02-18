@@ -1,14 +1,30 @@
 <template>
   <div id="app">
+    <div class="loading-wrap" v-if="!pharmacies">
+      loading...
+    </div>
     <router-view/>
   </div>
 </template>
+<script>
+// import loadingAnimation from '@/components/loadingAnimation.vue';
+import { mapGetters } from 'vuex';
 
+export default {
+  name: 'App',
+  components: {
+  },
+  computed: {
+    ...mapGetters(['pharmacies']),
+  },
+};
+</script>
 <style lang="scss">
 @import "~leaflet.markercluster/dist/MarkerCluster.css";
 @import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
 @import "./src/assets/style.scss";
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap');
+
 html,body, #app{
   width: 100%;
   height: 100vh;
@@ -19,40 +35,17 @@ html,body, #app{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
-.popUp {
-  font-size: 1rem;
-  font-family: 'Noto Sans TC', 'Avenir', Helvetica, Arial, sans-serif;
-  max-width: 160px;
-  .mask-title {
-    margin-bottom: .5rem;
-    padding-bottom: .25rem;
-    border-bottom: 1px solid #ededed;
-  }
-  .mask-wrap {
-    margin: .5rem auto;
-  }
-  .mask-adult, .mask-child {
-    min-width: 32px;
-    width: 100%;
-    padding: .25rem 1rem;
-    margin: .4rem auto;
-    text-align: left;
-    white-space: nowrap;
-  }
-  .mask-updated {
-    font-size: .8rem;
-    padding-top: .25rem;
-    // margin-bottom: .5rem;
-    // border-top: 1px solid #ededed;
-    color: #a2a2a2;
-    text-align: left;
-  }
-  .mask-note {
-    font-size: .9rem;
-    border-top: 1px solid #ededed;
-    margin-top: .5rem;
-    padding-top: .25rem;
-  }
+.loading-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1004;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
 }
-
 </style>
