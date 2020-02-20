@@ -62,6 +62,16 @@
         <p class="mainTitle m-0">即時口罩地圖</p>
       </div>
       <Pharmacy :pharmacy="pharmacyInfo"/>
+      <div class="notice-wrap pt-2">
+        <div class="notice-list">
+          <i class="fas fa-exclamation-circle"></i>
+          <span class="d-inline pl-1">部分藥局因採發放號碼牌方式，方便民眾購買口罩，系統目前無法顯示已發送號碼牌數量。</span>
+        </div>
+        <div class="notice-list">
+          <i class="fas fa-exclamation-circle"></i>
+          <span class="d-inline pl-1">口罩數量以藥局實際存量為主，線上查詢之數量僅供參考。</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -326,5 +336,16 @@ export default {
     }
   }
 }
-
+.notice-wrap {
+  font-size: 0.75rem;
+  color: #7c8b8d;
+  text-align: left;
+  position: absolute;
+  bottom: 1rem;
+  width: calc(100% - 2rem);
+  display: none;
+  @include pc-width {
+    display: block;
+  }
+}
 </style>

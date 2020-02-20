@@ -1,5 +1,5 @@
 // vue.config.js
-// const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
 module.exports = {
   pages: {
@@ -18,29 +18,29 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
     ? '/maskMap/'
     : '/',
-  // pwa: {
-  //   themeColor: '#ffffff',
-  //   msTileColor: '#ffffff',
-  //   workboxOptions: {
-  //     skipWaiting: true,
-  //     clientsClaim: true,
-  //   },
-  //   iconPaths: {
-  //     favicon32: 'img/icons/fuji-mountain-32x32.png',
-  //     favicon16: 'img/icons/fuji-mountain-16x16.png',
-  //     appleTouchIcon: 'img/icons/apple-touch-icon-152x152.png',
-  //     maskIcon: 'img/icons/safari-pinned-tab.svg',
-  //     msTileImage: 'img/icons/msapplication-icon-144x144.png',
-  //   },
-  // },
-  // configureWebpack: {
-  //   plugins: [
-  //     new ImageminPlugin({
-  //       disable: process.env.NODE_ENV !== 'production', // Disable during development
-  //       pngquant: {
-  //         quality: '80',
-  //       },
-  //     }),
-  //   ],
-  // },
+  pwa: {
+    themeColor: '#ffffff',
+    msTileColor: '#ffffff',
+    workboxOptions: {
+      skipWaiting: true,
+      clientsClaim: true,
+    },
+    iconPaths: {
+      favicon32: 'img/icons/favicon-32x32.png',
+      favicon16: 'img/icons/favicon-16x16.png',
+      appleTouchIcon: 'img/icons/apple-touch-icon-152x152.png',
+      maskIcon: 'img/icons/safari-pinned-tab.svg',
+      msTileImage: 'img/icons/msapplication-icon-144x144.png',
+    },
+  },
+  configureWebpack: {
+    plugins: [
+      new ImageminPlugin({
+        disable: process.env.NODE_ENV !== 'production', // Disable during development
+        pngquant: {
+          quality: '90',
+        },
+      }),
+    ],
+  },
 };
