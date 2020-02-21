@@ -118,9 +118,9 @@ export default {
   },
   methods: {
     ...mapActions(['fetchPharmacies', 'setPharmacyInfo', 'setMaskType']),
-    getLocation() {
+    async getLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.setLocation);
+        await navigator.geolocation.getCurrentPosition(this.setLocation);
         this.geolocation.state = true;
       } else {
         this.geolocation.state = false;
@@ -171,7 +171,15 @@ export default {
       }
     },
     setLocationCircle() {
-      if (this.map && !this.myLocationCircle) {
+      if (this.myLocationCircle) {
+        // clear
+        this.$utils.map.removeLayer(
+          this.map,
+          this.myLocationCircle,
+        );
+        this.myLocationCircle = null;
+      }
+      if (this.map) {
         this.myLocationCircle = this.$utils.map.addCircle(this.map,
           [this.geolocation.latitude, this.geolocation.longitude],
           {
